@@ -108,8 +108,30 @@ const editBookByIdHandler = (request, h) => {
 
     const index = books.findIndex((book) => book.id === bookId);
 
-    if (index !== -1) {
-        books[book] = {
+    if (index === -1) {
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal memperbaruhi buku, bookId tidak ditemukan',
+        });
+        response.code(404);
+        return response;
+    } else if (readPage > pageCount) {
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal memperbaruhi buku. readPage tidak boleh lebih besar dari pageCount'
+        });
+        response.code(400);
+        return response;
+    } else if (!name) {
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal memperbaruhi buku. Mohon isi nama buku'
+        });
+        response.code(400);
+        return response;
+    }
+
+        books[index] = {
             ...books[index],
             name,
             year,
@@ -121,44 +143,15 @@ const editBookByIdHandler = (request, h) => {
             reading,
             updatedAt,
         };
-
-        const name = (request, h) => {
-            const response = h.response({
-                status: 'fail',
-                message: 'Gagal memperbaruhi buku. Mohon isi Buku'
-            });
-
-            response.code(400);
-            return response;
-        }
-
-        if (readPage > pageCount){
-            const response = h.response({
-                status: 'fail',
-                message: 'Gagal memperbaruhi buku. readPage tidak boleh lebih besar dari pageCount'
-            });
-
-            response.code(400);
-            return response;
-        }
-
+        
         const response = h.response({
             status: 'success',
-            message: "Buku Berhasil diperbaharuhi"
+            message: 'Buku Berhasil diperbaharuhi'
         });
 
         response.code(200);
         return response;
-    }
-
-    const response = h.response({
-        status: 'fail',
-        message: "Gagal memperbaruhi buku, bookId tidak ditemukan",
-    });
-
-    response.code(404);
-    return response;
-};
+    };
 
 // API Menghapus Data
 const deleteBookByIdHandler = (request, h) => {
@@ -182,7 +175,7 @@ const deleteBookByIdHandler = (request, h) => {
         message: 'Buku gagal dihapus. Id tidak ditemukan',
     });
 
-    response.code(400);
+    response.code(404);
     return response;
 };
 

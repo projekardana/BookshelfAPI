@@ -3,27 +3,27 @@ const { addBookHandler, getAllBookHandler, getBookByIdHandler, editBookByIdHandl
 const routes = [
     {
         method: 'POST',
-        path: '/src/books',
+        path: '/books',
         handler: addBookHandler,
     },
     {
         method: 'GET',
-        path: '/src/books',
+        path: '/books',
         handler: getAllBookHandler,
     },
     {
         method: 'GET',
-        path: '/src/books/{bookId}',
+        path: '/books/{bookId}',
         handler: getBookByIdHandler,
     },
     {
         method: 'PUT',
-        path: '/src/books/{bookId}',
+        path: '/books/{bookId}',
         handler: editBookByIdHandler,
     },
     {
         method: 'DELETE',
-        path: '/src/books/{bookId}',
+        path: '/books/{bookId}',
         handler: deleteBookByIdHandler,
     },
 ];
