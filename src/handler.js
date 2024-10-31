@@ -4,6 +4,15 @@ const books = require('./books');
 const addBookHandler = (request, h) => {
     const {name, author, year, summary, publisher, pageCount, readPage, reading} = request.payload;
 
+    if (!name) {
+        const response = h.response({
+            status: 'fail',
+            message: 'Gagal menambahkan buku. Mohon isi nama buku',
+        });
+        response.code(400);
+        return response;
+    }
+
     if (readPage > pageCount ){
         const response = h.response({
             status: 'fail',
@@ -18,7 +27,6 @@ const addBookHandler = (request, h) => {
     const updatedAt = insertedAt;
     const finished = pageCount === readPage;
 
-
     const newBook = {
        id,
        name, 
@@ -31,29 +39,18 @@ const addBookHandler = (request, h) => {
        finished,
        reading,
        insertedAt,
-       updatedAt
+       updatedAt,
     };
     books.push(newBook);
 
-    const isSuccess = books.filter((book) => book.id === id).length > 0;
-
-    if(isSuccess){
-        const response = h.response({
-            status: 'success',
-            message:'Buku berhasil ditambahkan',
-            data: {
-                bookId: id,
-            },
-        });
-        response.code(201);
-        return response;
-    }
-
     const response = h.response({
-        status: 'fail',
-        message: 'Gagal menambahkan buku. Mohon isi nama buku',
+        status: 'success',
+        message:'Buku berhasil ditambahkan',
+        data: {
+            bookId: id,
+        },
     });
-    response.code(400);
+    response.code(201);
     return response;
 };
 
@@ -62,7 +59,8 @@ const getAllBookHandler = (request, h) => {
     const response = h.response({
         status: 'success',
         data: {
-            books: books.length > 0 ? books.map((book) => ({
+            books: books.length > 0 
+            ? books.map((book) => ({
                 id: book.id,
                 name: book.name,
                 publisher: book.publisher,
@@ -77,25 +75,26 @@ const getAllBookHandler = (request, h) => {
 const getBookByIdHandler = (request, h) => {
     const { bookId } = request.params;
 
-    const book = books.filter((book) => book.id === bookId)[0];
+    const book = books.find((b) => b.id === bookId);
 
     if (book){
         const response = h.response({
             status: 'success',
             data: {
-                books: books.map((book) => ({
+                book: {
                     id: book.id,
                     name: book.name,
                     year: book.year,
                     author: book.author,
                     summary: book.summary,
+                    publisher: book.publisher,
                     pageCount: book.pageCount,
                     readPage: book.readPage,
                     finished: book.finished,
                     reading: book.reading,
                     insertedAt: book.insertedAt,
                     updatedAt: book.updatedAt,
-                })),
+                },
             },
         });
         response.code(200);
